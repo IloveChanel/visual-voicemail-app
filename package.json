@@ -1,0 +1,17 @@
+{
+  "name": "visual-voicemail-app",
+  "version": "1.0.0",
+  "description": "A visual voicemail application for managing and viewing voicemails",
+  "main": "app.js",
+  "scripts": {
+    "start": "npx http-server -p 3000 -o",
+    "test": "echo \"No tests specified yet\" && exit 0"
+  },
+  "keywords": [
+    "voicemail",
+    "visual-voicemail",
+    "communication"
+  ],
+  "author": "",
+  "license": "ISC"
+}
