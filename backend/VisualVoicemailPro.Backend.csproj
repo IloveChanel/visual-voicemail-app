@@ -1,0 +1,108 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>VisualVoicemailPro</RootNamespace>
+    <AssemblyName>VisualVoicemailPro.Backend</AssemblyName>
+    <Product>Visual Voicemail Pro</Product>
+    <Version>2.0.0</Version>
+    <Authors>Visual Voicemail Team</Authors>
+    <Company>Visual Voicemail Pro</Company>
+    <Description>Backend API for Visual Voicemail Pro with AI-powered transcription, spam detection, and subscription management</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Google Cloud Services for AI Features -->
+    <PackageReference Include="Google.Cloud.Speech.V1" Version="3.6.0" />
+    <PackageReference Include="Google.Cloud.Translate.V3" Version="3.4.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
+    
+    <!-- Stripe for Subscription Management -->
+    <PackageReference Include="Stripe.net" Version="44.13.0" />
+    
+    <!-- ASP.NET Core and Web API -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    
+    <!-- Entity Framework for Database -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+    
+    <!-- JSON and Serialization -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+    
+    <!-- Enhanced Configuration Management -->
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+    
+    <!-- Resilience and Fault Tolerance -->
+    <PackageReference Include="Polly" Version="8.2.0" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+    <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
+    
+    <!-- Enhanced Logging -->
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />
+    
+    <!-- Firebase for Authentication and Storage -->
+    <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
+    
+    <!-- Azure Services -->
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
+    
+    <!-- Utility Packages -->
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    
+    <!-- Audio Processing -->
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    
+    <!-- HTTP Client -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    
+    <!-- Testing Framework -->
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    
+    <!-- Health Checks -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.0" />
+    
+    <!-- Performance and Monitoring -->
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include our enhanced classes -->
+    <Compile Include="Models\Enhanced.cs" />
+    <Compile Include="Services\Enhanced.cs" />
+    <Compile Include="ViewModels\EnhancedMainViewModel.cs" />
+    <Compile Include="PaymentService.cs" />
+    <Compile Include="StripeIntegrationService.cs" />
+    <Compile Include="VoicemailProcessor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="public\**" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

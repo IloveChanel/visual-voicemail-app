@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Voicemail Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #4F46E5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4F46E5;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .voicemail-list {
+            padding: 0 20px;
+        }
+        
+        .voicemail-item {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #4F46E5;
+        }
+        
+        .voicemail-item.spam {
+            border-left-color: #EF4444;
+            background: #FEF2F2;
+        }
+        
+        .voicemail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .caller-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .voicemail-content {
+            margin: 8px 0;
+        }
+        
+        .transcription {
+            font-style: italic;
+            color: #555;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+        
+        .voicemail-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .spam-badge {
+            background: #EF4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .duration {
+            background: #E5E7EB;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        
+        .subscription-prompt {
+            background: linear-gradient(135deg, #F59E0B, #EAB308);
+            color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .price {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .cta-button {
+            background: white;
+            color: #F59E0B;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #10B981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .offline .status-indicator {
+            background: #EF4444;
+        }
+        
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Visual Voicemail Pro</h1>
+            <p>Your Samsung is connected!</p>
+        </div>
+        
+        <div class="stats" id="stats">
+            <div class="stat">
+                <div class="stat-number" id="total-count">-</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="unread-count">-</div>
+                <div class="stat-label">Unread</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="spam-count">-</div>
+                <div class="stat-label">Spam</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="fav-count">-</div>
+                <div class="stat-label">Favorites</div>
+            </div>
+        </div>
+        
+        <div class="subscription-prompt">
+            <h3>🎉 Welcome to Visual Voicemail Pro!</h3>
+            <div class="price">$3.49<span style="font-size:16px;">/month</span></div>
+            <p>✨ Unlimited transcription<br>
+            🌍 Multi-language support<br>
+            🛡️ AI-powered spam detection<br>
+            📱 Real-time translation</p>
+            <button class="cta-button" onclick="window.open('subscribe.html', '_blank')">
+                Start 7-Day FREE Trial
+            </button>
+        </div>
+        
+        <div class="voicemail-list" id="voicemail-list">
+            <div class="loading">
+                📡 Connecting to your voicemail server...
+            </div>
+        </div>
+        
+        <div class="status-indicator" id="status">
+            ✓
+        </div>
+    </div>
+
+    <script>
+        // Test your actual API!
+        const API_BASE = 'http://localhost:3000';
+        
+        async function loadVoicemails() {
+            try {
+                console.log('🔄 Loading voicemails from your API...');
+                const response = await fetch(`${API_BASE}/api/voicemails`);
+                const data = await response.json();
+                
+                displayStats(data.stats);
+                displayVoicemails(data.voicemails);
+                
+                document.getElementById('status').textContent = '✓';
+                document.body.classList.remove('offline');
+                
+            } catch (error) {
+                console.error('❌ API Error:', error);
+                document.getElementById('status').textContent = '✗';
+                document.body.classList.add('offline');
+                
+                // Show offline message
+                document.getElementById('voicemail-list').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <h3>📱 Testing Mode</h3>
+                        <p>Your backend server needs to be running.</p>
+                        <p>Start it with: <code>node test-server.js</code></p>
+                        <button onclick="loadVoicemails()" style="margin-top: 15px; padding: 10px 20px; background: #4F46E5; color: white; border: none; border-radius: 8px;">
+                            Retry Connection
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayStats(stats) {
+            document.getElementById('total-count').textContent = stats.total;
+            document.getElementById('unread-count').textContent = stats.unread;
+            document.getElementById('spam-count').textContent = stats.spam;
+            document.getElementById('fav-count').textContent = stats.favorites;
+        }
+        
+        function displayVoicemails(voicemails) {
+            const container = document.getElementById('voicemail-list');
+            
+            if (voicemails.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <h3>📭 No voicemails yet</h3>
+                        <p>Your voicemails will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = voicemails.map(vm => `
+                <div class="voicemail-item ${vm.isSpam ? 'spam' : ''}" onclick="playVoicemail('${vm.id}')">
+                    <div class="voicemail-header">
+                        <div class="caller-name">
+                            ${vm.callerName || vm.callerNumber}
+                            ${!vm.isRead ? ' <span style="color: #4F46E5;">●</span>' : ''}
+                        </div>
+                        <div class="timestamp">${formatTime(vm.timestamp)}</div>
+                    </div>
+                    
+                    ${vm.transcription ? `
+                        <div class="transcription">
+                            "${vm.transcription}"
+                        </div>
+                    ` : ''}
+                    
+                    <div class="voicemail-meta">
+                        <div>
+                            <span class="duration">${formatDuration(vm.duration)}</span>
+                            ${vm.isSpam ? '<span class="spam-badge">SPAM</span>' : ''}
+                        </div>
+                        <div>${vm.callerNumber}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff/60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff/3600000)}h ago`;
+            return date.toLocaleDateString();
+        }
+        
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function playVoicemail(id) {
+            alert(`🎵 Playing voicemail ${id}\\n\\nIn the real app, this would:\\n• Play audio file\\n• Mark as read\\n• Show waveform\\n• Enable transcription`);
+        }
+        
+        function testSubscription() {
+            // Open the new subscription page
+            window.open('subscribe.html', '_blank');
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadVoicemails, 30000);
+        
+        // Load on page load
+        loadVoicemails();
+        
+        console.log('📱 Visual Voicemail Pro - Samsung Test Version');
+        console.log('🔗 Backend API:', API_BASE);
+        console.log('🚀 Ready for testing!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "name": "VisualVoicemail",
+  "displayName": "Visual Voicemail Pro",
+  "platforms": {
+    "android": {
+      "package": "com.visualvoicemail.android",
+      "versionCode": 1,
+      "versionName": "1.0.0",
+      "minSdkVersion": 21,
+      "targetSdkVersion": 34,
+      "permissions": [
+        "android.permission.READ_PHONE_STATE",
+        "android.permission.READ_CALL_LOG",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_CONTACTS",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier": "com.visualvoicemail.ios",
+      "version": "1.0.0",
+      "buildNumber": "1",
+      "deploymentTarget": "13.0",
+      "capabilities": [
+        "CallKit",
+        "Push Notifications",
+        "In-App Purchase",
+        "Background Modes"
+      ]
+    }
+  },
+  "store": {
+    "android": {
+      "storeName": "Visual Voicemail Pro",
+      "shortDescription": "Smart voicemail with spam blocking",
+      "fullDescription": "Transform your voicemail experience with AI-powered transcription, spam detection, and smart call blocking. Get organized with visual voicemail that actually works.",
+      "keywords": ["voicemail", "spam", "call blocking", "transcription"],
+      "category": "Communication",
+      "contentRating": "Everyone"
+    },
+    "ios": {
+      "storeName": "Visual Voicemail Pro",
+      "subtitle": "Smart Voicemail & Spam Blocker",
+      "description": "Experience the future of voicemail with AI transcription, smart spam detection, and powerful call blocking features.",
+      "keywords": ["voicemail", "spam blocker", "call management", "transcription"],
+      "category": "Utilities",
+      "contentRating": "4+"
+    }
+  }
+}

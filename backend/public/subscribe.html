@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visual Voicemail Pro - Premium Subscription</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .pricing-section {
+            padding: 40px 30px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .pricing-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
+        }
+
+        .pricing-card.recommended {
+            border-color: #4f46e5;
+            background: linear-gradient(135deg, #f8faff, #eef2ff);
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4f46e5;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tier-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .tier-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+
+        .tier-price .currency {
+            font-size: 1.5rem;
+        }
+
+        .tier-price .period {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .trial-info {
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 30px;
+            color: #4b5563;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .subscribe-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .subscribe-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .free-btn {
+            background: #6b7280;
+            cursor: default;
+        }
+
+        .free-btn:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .user-input {
+            background: #f9fafb;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .benefits {
+            background: #f8faff;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .benefits h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .benefit-item {
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .benefit-desc {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .pricing-section, .benefits {
+                padding: 30px 20px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>🎙️ Visual Voicemail Pro</h1>
+            <p>Transform your voicemail experience with AI-powered transcription and smart spam detection</p>
+        </div>
+
+        <!-- User Input Section -->
+        <div class="user-input">
+            <h3 style="margin-bottom: 20px; text-align: center;">Get Started with Visual Voicemail Pro</h3>
+            <div class="input-group">
+                <label for="phone-number">Phone Number</label>
+                <input type="tel" id="phone-number" placeholder="248-321-9121" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+            <div class="input-group">
+                <label for="user-id">User ID (Optional)</label>
+                <input type="text" id="user-id" placeholder="Auto-generated if empty">
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="pricing-section">
+            <h2 style="text-align: center; margin-bottom: 10px;">Choose Your Plan</h2>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 30px;">
+                Upgrade your voicemail with advanced AI features
+            </p>
+
+            <div class="pricing-grid">
+                <!-- Free Tier -->
+                <div class="pricing-card">
+                    <div class="tier-name">Free</div>
+                    <div class="tier-price">
+                        <span class="currency">$</span>0<span class="period">/month</span>
+                    </div>
+                    <ul class="features-list">
+                        <li>Basic transcription</li>
+                        <li>5 voicemails per month</li>
+                        <li>Standard spam detection</li>
+                        <li>Email notifications</li>
+                    </ul>
+                    <button class="subscribe-btn free-btn" disabled>Current Plan</button>
+                </div>
+
+                <!-- Pro Tier (Recommended) -->
+                <div class="pricing-card recommended" data-tier="pro">
+                    <div class="recommended-badge">Most Popular</div>
+                    <div class="tier-name">Visual Voicemail Pro</div>
+                    <div class="tier-price">
+                        <span class="currency">$</span>3.49<span class="period">/month</span>
+                    </div>
+                    <div class="trial-info">
+                        🎉 7-Day Free Trial
+                    </div>
+                    <ul class="features-list">
+                        <li>Unlimited transcription</li>
+                        <li>Multi-language support (9 languages)</li>
+                        <li>Advanced spam detection</li>
+                        <li>Real-time translation</li>
+                        <li>Smart categorization</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <button class="subscribe-btn" data-tier="pro">
+                        Start Free Trial
+                    </button>
+                </div>
+
+                <!-- Business Tier -->
+                <div class="pricing-card" data-tier="business">
+                    <div class="tier-name">Business Pro</div>
+                    <div class="tier-price">
+                        <span class="currency">$</span>9.99<span class="period">/month</span>
+                    </div>
+                    <ul class="features-list">
+                        <li>Everything in Pro</li>
+                        <li>Team management</li>
+                        <li>Analytics dashboard</li>
+                        <li>API access</li>
+                        <li>Priority processing</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <button class="subscribe-btn" data-tier="business">
+                        Subscribe Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits">
+            <h3>Why Choose Visual Voicemail Pro?</h3>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">🌍</div>
+                    <div class="benefit-title">Multi-Language</div>
+                    <div class="benefit-desc">Transcribe and translate voicemails in 9+ languages</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">🛡️</div>
+                    <div class="benefit-title">Spam Protection</div>
+                    <div class="benefit-desc">AI-powered spam detection with 95% accuracy</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-title">Instant Processing</div>
+                    <div class="benefit-desc">Get transcriptions within seconds of receiving voicemails</div>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📱</div>
+                    <div class="benefit-title">Cross-Platform</div>
+                    <div class="benefit-desc">Works on Android, iOS, and web browsers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Creating your subscription...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" id="error-message"></div>
+
+    <script>
+        // Initialize Stripe with your publishable key
+        const stripe = Stripe('pk_test_51QLrGvLkdIwHu7ix...'); // Replace with your actual publishable key
+        
+        // Configuration
+        const config = {
+            apiBaseUrl: 'https://your-backend-url.azurewebsites.net', // Replace with your Azure URL
+            // For local testing: 'http://localhost:5000'
+        };
+
+        // DOM elements
+        const phoneInput = document.getElementById('phone-number');
+        const emailInput = document.getElementById('email');
+        const userIdInput = document.getElementById('user-id');
+        const subscribeButtons = document.querySelectorAll('.subscribe-btn[data-tier]');
+        const loadingOverlay = document.getElementById('loading');
+        const errorMessage = document.getElementById('error-message');
+
+        // Validate form inputs
+        function validateInputs() {
+            const phone = phoneInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            if (!phone) {
+                showError('Please enter your phone number');
+                return false;
+            }
+            
+            if (!email || !email.includes('@')) {
+                showError('Please enter a valid email address');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show loading state
+        function showLoading(show) {
+            loadingOverlay.style.display = show ? 'block' : 'none';
+            subscribeButtons.forEach(btn => {
+                btn.disabled = show;
+            });
+        }
+
+        // Generate user ID if not provided
+        function generateUserId() {
+            return userIdInput.value.trim() || 
+                   `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+
+        // Format phone number
+        function formatPhoneNumber(phone) {
+            // Remove all non-digits
+            const cleaned = phone.replace(/\D/g, '');
+            
+            // Add +1 if it's a US number without country code
+            if (cleaned.length === 10) {
+                return `+1${cleaned}`;
+            } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
+                return `+${cleaned}`;
+            }
+            
+            return `+${cleaned}`;
+        }
+
+        // Handle subscription button clicks
+        subscribeButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                if (!validateInputs()) return;
+
+                const tier = button.dataset.tier;
+                const userId = generateUserId();
+                const phone = formatPhoneNumber(phoneInput.value);
+                const email = emailInput.value.trim();
+
+                console.log('Creating checkout session:', { userId, tier, phone, email });
+                
+                try {
+                    showLoading(true);
+
+                    // Create checkout session with your enhanced API
+                    const response = await fetch(`${config.apiBaseUrl}/create-checkout-session`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: userId,
+                            tier: tier,
+                            customerEmail: email,
+                            phoneNumber: phone
+                        })
+                    });
+
+                    const data = await response.json();
+                    console.log('Checkout session response:', data);
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.error || 'Failed to create checkout session');
+                    }
+
+                    // Redirect to Stripe Checkout
+                    const { error } = await stripe.redirectToCheckout({
+                        sessionId: data.sessionId
+                    });
+
+                    if (error) {
+                        throw error;
+                    }
+
+                } catch (error) {
+                    console.error('Subscription error:', error);
+                    showError(error.message || 'Something went wrong. Please try again.');
+                } finally {
+                    showLoading(false);
+                }
+            });
+        });
+
+        // Auto-format phone number input
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length >= 6) {
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{3})(\d{3})/, '$1-$2');
+            }
+            
+            e.target.value = value;
+        });
+
+        // Pre-fill with test phone number for development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            phoneInput.value = '248-321-9121';
+            emailInput.value = 'test@visualvoicemail.com';
+        }
+
+        console.log('🎙️ Visual Voicemail Pro subscription page loaded');
+        console.log('📊 Ready for $3.49/month Pro subscriptions with 7-day free trial');
+    </script>
+</body>
+</html>
