@@ -11,13 +11,17 @@ class VoicemailApp {
     }
 
     loadVoicemails() {
-        // Sample voicemail data
+        // Sample voicemail data with relative timestamps
+        const now = new Date();
+        const hoursAgo = (hours) => new Date(now.getTime() - hours * 60 * 60 * 1000);
+        const daysAgo = (days) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+        
         this.voicemails = [
             {
                 id: 1,
                 caller: 'John Doe',
                 number: '+1 (555) 123-4567',
-                timestamp: new Date('2025-11-05T10:30:00'),
+                timestamp: hoursAgo(12),
                 duration: '1:23',
                 listened: false
             },
@@ -25,7 +29,7 @@ class VoicemailApp {
                 id: 2,
                 caller: 'Jane Smith',
                 number: '+1 (555) 987-6543',
-                timestamp: new Date('2025-11-05T14:15:00'),
+                timestamp: hoursAgo(9),
                 duration: '0:45',
                 listened: false
             },
@@ -33,7 +37,7 @@ class VoicemailApp {
                 id: 3,
                 caller: 'Support Team',
                 number: '+1 (555) 555-5555',
-                timestamp: new Date('2025-11-04T16:20:00'),
+                timestamp: daysAgo(1),
                 duration: '2:10',
                 listened: true
             }
