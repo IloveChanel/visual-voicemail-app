@@ -83,6 +83,17 @@ main {
     font-size: 0.9rem;
 }
 
+.voicemail-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.phone-number {
+    color: #666;
+    font-size: 0.95rem;
+}
+
 .duration {
     color: #667eea;
     font-weight: 500;

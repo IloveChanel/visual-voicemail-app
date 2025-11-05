@@ -90,8 +90,10 @@ class VoicemailApp {
     }
 
     playVoicemail(id) {
-        console.log(`Playing voicemail ${id}`);
-        alert(`Playing voicemail from ${this.voicemails.find(v => v.id === id).caller}`);
+        const voicemail = this.voicemails.find(v => v.id === id);
+        console.log(`Playing voicemail from ${voicemail.caller} (${voicemail.number})`);
+        // In a real application, this would integrate with audio playback
+        // For now, we'll just log to the console
     }
 }
 
